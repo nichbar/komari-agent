@@ -7,8 +7,8 @@ WHITE='\033[0;37m'
 NC='\033[0m' # 无颜色
 
 # 定义操作系统和架构列表
-OS_LIST=("windows" "linux" "darwin" "freebsd")
-ARCH_LIST=("amd64" "arm64" "386" "arm")
+OS_LIST=("linux")
+ARCH_LIST=("arm64")
 
 # 创建构建目录
 mkdir -p ./build
@@ -60,3 +60,5 @@ fi
 
 # 提示构建完成
 echo -e "\nBinaries are in the ./build directory."
+
+mv build/komari-agent-linux-arm64 /Users/juntao/nzwrapper/app/src/main/jniLibs/arm64-v8a/libkomari-agent.so

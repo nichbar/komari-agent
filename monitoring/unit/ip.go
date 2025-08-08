@@ -4,6 +4,8 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+
+	"github.com/komari-monitor/komari-agent/patch"
 )
 
 var userAgent = "curl/8.0.1"
@@ -25,7 +27,7 @@ func GetIPv4Address() (string, error) {
 			continue
 		}
 		req.Header.Set("User-Agent", userAgent)
-		resp, err := http.DefaultClient.Do(req)
+		resp, err := patch.Client.Do(req)
 		if err != nil {
 			continue
 		}
@@ -58,7 +60,7 @@ func GetIPv6Address() (string, error) {
 			continue
 		}
 		req.Header.Set("User-Agent", userAgent)
-		resp, err := http.DefaultClient.Do(req)
+		resp, err := patch.Client.Do(req)
 		if err != nil {
 			continue
 		}

@@ -11,6 +11,7 @@ import (
 
 	"github.com/komari-monitor/komari-agent/cmd/flags"
 	monitoring "github.com/komari-monitor/komari-agent/monitoring/unit"
+	"github.com/komari-monitor/komari-agent/patch"
 	"github.com/komari-monitor/komari-agent/update"
 )
 
@@ -32,10 +33,22 @@ func UpdateBasicInfo() {
 	}
 }
 func uploadBasicInfo() error {
+	var kernelVersion string
+	var gpuName string
+
 	cpu := monitoring.Cpu()
 
 	osname := monitoring.OSName()
-	kernelVersion := monitoring.KernelVersion()
+
+	// access kernel and gpu info will trigger SIGSYS in Android
+	if flags.IsAndroid {
+		kernelVersion = "Unknown"
+		gpuName = "None"
+	} else {
+		kernelVersion = monitoring.KernelVersion()
+		gpuName = monitoring.GpuName()
+	}
+
 	ipv4, ipv6, _ := monitoring.GetIPAddress()
 
 	data := map[string]interface{}{
@@ -49,7 +62,7 @@ func uploadBasicInfo() error {
 		"mem_total":      monitoring.Ram().Total,
 		"swap_total":     monitoring.Swap().Total,
 		"disk_total":     monitoring.Disk().Total,
-		"gpu_name":       monitoring.GpuName(),
+		"gpu_name":       gpuName,
 		"virtualization": monitoring.Virtualized(),
 		"version":        update.CurrentVersion,
 	}
@@ -80,8 +93,7 @@ func tryUploadData(data map[string]interface{}) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := patch.Client.Do(req)
 	if err != nil {
 		return err
 	}

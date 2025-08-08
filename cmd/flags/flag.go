@@ -15,4 +15,6 @@ var (
 	ExcludeNics         string
 	IncludeMountpoints  string
 	MonthRotate         int
+	IsAndroid           bool
+	HasRootPrivilege    bool
 )
