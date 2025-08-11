@@ -28,7 +28,8 @@ type Config struct {
 	ConfigFile          string  `json:"config_file" env:"AGENT_CONFIG_FILE"`                       // JSON配置文件路径
 	DisableCompression  bool    `json:"disable_compression" env:"AGENT_DISABLE_COMPRESSION"`       // 禁用v2传输压缩
 	PreferIPVersion     string  `json:"prefer_ip_version" env:"AGENT_PREFER_IP_VERSION"`           // 面板连接优先使用的 IP 版本：4 或 6
-
+	IsAndroid           bool    `json:"is_android" env:"AGENT_IS_ANDROID"`                         // 是否运行在 Android 环境
+	HasRootPrivilege    bool    `json:"has_root_privilege" env:"AGENT_HAS_ROOT_PRIVILEGE"`         // 是否具有 root 权限
 }
 
 var GlobalConfig = &Config{}

@@ -134,7 +134,7 @@ func resolveIP(target string) (string, error) {
 		return target, nil
 	}
 	// 解析域名到 IP
-	addrs, err := net.LookupHost(target)
+	addrs, err := dnsresolver.GetCustomResolver().LookupHost(context.Background(), target)
 	if err != nil || len(addrs) == 0 {
 		return "", errors.New("failed to resolve target")
 	}
@@ -162,7 +162,7 @@ func icmpPing(target string, timeout time.Duration) (int64, error) {
 	}
 	pinger.Count = 1
 	pinger.Timeout = timeout
-	pinger.SetPrivileged(true)
+	pinger.SetPrivileged(flags.HasRootPrivilege)
 	err = pinger.Run()
 	if err != nil {
 		return -1, err
