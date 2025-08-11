@@ -92,5 +92,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&flags.ExcludeNics, "exclude-nics", "", "Comma-separated list of network interfaces to exclude")
 	RootCmd.PersistentFlags().StringVar(&flags.IncludeMountpoints, "include-mountpoint", "", "Semicolon-separated list of mount points to include for disk statistics")
 	RootCmd.PersistentFlags().IntVar(&flags.MonthRotate, "month-rotate", 0, "Month reset for network statistics (0 to disable)")
+	RootCmd.PersistentFlags().BoolVar(&flags.IsAndroid, "is-android", false, "If running on Android environment")
+	RootCmd.PersistentFlags().BoolVar(&flags.HasRootPrivilege, "has-root-privilege", false, "If root privilege is granted")
 	RootCmd.PersistentFlags().ParseErrorsWhitelist.UnknownFlags = true
 }

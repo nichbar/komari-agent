@@ -1,7 +1,7 @@
 package flags
 
 var (
-	AutoDiscoveryKey     string
+	AutoDiscoveryKey    string
 	DisableAutoUpdate   bool
 	DisableWebSsh       bool
 	MemoryModeAvailable bool
@@ -16,4 +16,6 @@ var (
 	ExcludeNics         string
 	IncludeMountpoints  string
 	MonthRotate         int
+	IsAndroid           bool
+	HasRootPrivilege    bool
 )
