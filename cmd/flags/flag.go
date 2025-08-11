@@ -19,4 +19,6 @@ var (
 	CFAccessClientID     string
 	CFAccessClientSecret string
 	MemoryIncludeCache   bool
+	IsAndroid           bool
+	HasRootPrivilege    bool
 )

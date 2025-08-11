@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/komari-monitor/komari-agent/cmd/flags"
 	"github.com/komari-monitor/komari-agent/monitoring"
+	"github.com/komari-monitor/komari-agent/patch"
 	"github.com/komari-monitor/komari-agent/terminal"
 	"github.com/komari-monitor/komari-agent/ws"
 )
@@ -92,6 +93,7 @@ func EstablishWebSocketConnection() {
 func connectWebSocket(websocketEndpoint string) (*ws.SafeConn, error) {
 	dialer := &websocket.Dialer{
 		HandshakeTimeout: 5 * time.Second,
+		NetDialContext:   patch.Dialer.DialContext,
 	}
 	
 	// 创建请求头并添加Cloudflare Access头部
@@ -161,6 +163,7 @@ func establishTerminalConnection(token, id, endpoint string) {
 	endpoint = "ws" + strings.TrimPrefix(endpoint, "http")
 	dialer := &websocket.Dialer{
 		HandshakeTimeout: 5 * time.Second,
+		NetDialContext:   patch.Dialer.DialContext,
 	}
 	
 	// 创建请求头并添加Cloudflare Access头部

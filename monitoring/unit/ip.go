@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"regexp"
 	"time"
+
+	"github.com/komari-monitor/komari-agent/patch"
 )
 
 var (
@@ -17,6 +19,7 @@ var (
 				d := net.Dialer{
 					Timeout:   15 * time.Second,
 					KeepAlive: 30 * time.Second,
+					Resolver:  patch.Resolver,
 				}
 				return d.DialContext(ctx, "tcp4", addr) // 锁v4防止出现问题
 			},
@@ -33,6 +36,7 @@ var (
 				d := net.Dialer{
 					Timeout:   15 * time.Second,
 					KeepAlive: 30 * time.Second,
+					Resolver:  patch.Resolver,
 				}
 				return d.DialContext(ctx, "tcp6", addr) // 锁v6防止出现问题
 			},
