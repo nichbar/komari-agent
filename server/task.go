@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/komari-monitor/komari-agent/cmd/flags"
+	"github.com/komari-monitor/komari-agent/patch"
 	"github.com/komari-monitor/komari-agent/ws"
 	ping "github.com/prometheus-community/pro-bing"
 )
@@ -70,12 +71,12 @@ func uploadTaskResult(taskID, result string, exitCode int, finishedAt time.Time)
 	jsonData, _ := json.Marshal(payload)
 	endpoint := flags.Endpoint + "/api/clients/task/result?token=" + flags.Token
 
-	resp, _ := http.Post(endpoint, "application/json", bytes.NewBuffer(jsonData))
+	resp, _ := patch.Client.Post(endpoint, "application/json", bytes.NewBuffer(jsonData))
 	maxRetry := flags.MaxRetries
 	for i := 0; i < maxRetry && resp.StatusCode != http.StatusOK; i++ {
 		log.Printf("Failed to upload task result, retrying %d/%d", i+1, maxRetry)
 		time.Sleep(2 * time.Second) // Wait before retrying
-		resp, _ = http.Post(endpoint, "application/json", bytes.NewBuffer(jsonData))
+		resp, _ = patch.Client.Post(endpoint, "application/json", bytes.NewBuffer(jsonData))
 	}
 	if resp != nil {
 		defer resp.Body.Close()
@@ -92,7 +93,7 @@ func resolveIP(target string) (string, error) {
 		return target, nil
 	}
 	// 解析域名到 IP
-	addrs, err := net.LookupHost(target)
+	addrs, err := patch.Resolver.LookupHost(context.Background(), target)
 	if err != nil || len(addrs) == 0 {
 		return "", errors.New("failed to resolve target")
 	}
@@ -120,7 +121,7 @@ func icmpPing(target string, timeout time.Duration) (int64, error) {
 	}
 	pinger.Count = 1
 	pinger.Timeout = timeout
-	pinger.SetPrivileged(true)
+	pinger.SetPrivileged(flags.HasRootPrivilege)
 	err = pinger.Run()
 	if err != nil {
 		return -1, err
@@ -181,7 +182,7 @@ func httpPing(target string, timeout time.Duration) (int64, error) {
 				if err != nil {
 					return nil, err
 				}
-				return net.DialTimeout(network, net.JoinHostPort(ip, port), timeout)
+				return patch.Dialer.DialContext(ctx, network, net.JoinHostPort(ip, port))
 			},
 		},
 	}

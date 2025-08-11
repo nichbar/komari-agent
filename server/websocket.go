@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/komari-monitor/komari-agent/cmd/flags"
 	"github.com/komari-monitor/komari-agent/monitoring"
+	"github.com/komari-monitor/komari-agent/patch"
 	"github.com/komari-monitor/komari-agent/terminal"
 	"github.com/komari-monitor/komari-agent/ws"
 )
@@ -91,6 +92,7 @@ func EstablishWebSocketConnection() {
 func connectWebSocket(websocketEndpoint string) (*ws.SafeConn, error) {
 	dialer := &websocket.Dialer{
 		HandshakeTimeout: 5 * time.Second,
+		NetDialContext:   patch.Dialer.DialContext,
 	}
 	conn, resp, err := dialer.Dial(websocketEndpoint, nil)
 	if err != nil {
@@ -152,6 +154,7 @@ func establishTerminalConnection(token, id, endpoint string) {
 	endpoint = "ws" + strings.TrimPrefix(endpoint, "http")
 	dialer := &websocket.Dialer{
 		HandshakeTimeout: 5 * time.Second,
+		NetDialContext:   patch.Dialer.DialContext,
 	}
 	conn, _, err := dialer.Dial(endpoint, nil)
 	if err != nil {
