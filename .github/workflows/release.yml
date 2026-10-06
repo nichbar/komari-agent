@@ -24,6 +24,10 @@ jobs:
         include:
           - goos: linux
             goarch: loong64
+          - goos: android
+            goarch: arm64
+          - goos: android
+            goarch: arm
         goos: [windows, linux, darwin, freebsd]
         goarch: [amd64, arm64, 386, arm]
 
@@ -50,7 +54,23 @@ jobs:
             # macOS binaries typically do not have a file extension
             true
           fi
-            go build -trimpath -ldflags="-X github.com/komari-monitor/komari-agent/update.CurrentVersion=${VERSION}" -o $BINARY_NAME
+          if [ "${{ matrix.goos }}" = "android" ] && [ "${{ matrix.goarch }}" = "arm" ]; then
+            export CGO_ENABLED=1
+            NDK_PATH="${ANDROID_NDK_ROOT:-}"
+            if [ -z "$NDK_PATH" ] && [ -d "${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk" ]; then
+              NDK_PATH=$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+            fi
+            CLANG_BIN=$(find "${NDK_PATH}/toolchains/llvm/prebuilt" -name "armv7a-linux-androideabi21-clang" 2>/dev/null | head -n 1)
+            if [ -z "$CLANG_BIN" ]; then
+              CLANG_BIN=$(find "${NDK_PATH}/toolchains/llvm/prebuilt" -name "armv7a-linux-androideabi*-clang" 2>/dev/null | sort -V | head -n 1)
+            fi
+            if [ -z "$CLANG_BIN" ]; then
+              echo "Error: Android NDK armv7a clang compiler not found"
+              exit 1
+            fi
+            export CC="$CLANG_BIN"
+          fi
+          go build -trimpath -ldflags="-X github.com/komari-monitor/komari-agent/update.CurrentVersion=${VERSION}" -o $BINARY_NAME
 
       - name: Upload binary to release
         env:

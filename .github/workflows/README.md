@@ -55,11 +55,15 @@ Trigger:
 
 Jobs:
 
-- Builds a matrix of Windows, Linux, macOS, and FreeBSD targets.
+- Builds a matrix of Windows, Linux, macOS, FreeBSD, and Android targets.
 - Excludes unsupported combinations:
   - `windows/arm`
   - `darwin/386`
   - `darwin/arm`
+- Includes additional targets:
+  - `linux/loong64`
+  - `android/arm64`
+  - `android/arm`
 - Uploads build artifacts to the workflow run.
 
 This workflow does not publish GitHub releases or Docker images.

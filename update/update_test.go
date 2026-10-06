@@ -122,6 +122,8 @@ func TestExpectedAssetName(t *testing.T) {
 		{"linux", "amd64", "komari-agent-linux-amd64"},
 		{"darwin", "arm64", "komari-agent-darwin-arm64"},
 		{"windows", "amd64", "komari-agent-windows-amd64.exe"},
+		{"android", "arm64", "komari-agent-android-arm64"},
+		{"android", "arm", "komari-agent-android-arm"},
 	}
 
 	for _, tt := range tests {
